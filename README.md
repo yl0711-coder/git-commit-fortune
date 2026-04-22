@@ -64,6 +64,8 @@ Git Commit Fortune
 
 Repository: /path/to/repo
 
+Omen: The Final That Was Not Final
+Fortune level: cursed but deployable
 Repository mood: functional but emotionally unavailable
 Spirit animal: a caffeinated octopus holding a rollback plan
 
@@ -79,6 +81,9 @@ A commit called 'final final' will appear before anyone admits defeat.
 
 Advice:
 Before the next fix, ask whether the bug is a symptom or a tradition.
+
+Lucky command:
+git log --oneline --grep=final
 ```
 
 ## JSON Output
@@ -92,6 +97,7 @@ JSON output includes:
 - repository path
 - generated fortune
 - statistics used by the fortune generator
+- lucky command suggestion
 
 This is useful if you want to build a badge, dashboard, or another wrapper around the output.
 

@@ -38,10 +38,12 @@ class CommitStats:
 class Fortune:
     """A generated repository fortune."""
 
+    omen: str
+    fortune_level: str
     mood: str
     spirit_animal: str
     signs: list[str]
     prediction: str
     advice: str
+    lucky_command: str
     stats: CommitStats
-

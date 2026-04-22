@@ -28,6 +28,8 @@ class AnalyzerTest(unittest.TestCase):
         fortune = generate_fortune(stats)
 
         self.assertEqual("silent but suspicious", fortune.mood)
+        self.assertEqual("uncommitted timeline", fortune.omen)
+        self.assertEqual("unreadable", fortune.fortune_level)
         self.assertEqual(["no commits were found"], fortune.signs)
 
     def test_generate_fortune_prefers_chaos_when_wip_is_common(self):
@@ -42,6 +44,22 @@ class AnalyzerTest(unittest.TestCase):
 
         self.assertIn("temporary", fortune.prediction)
         self.assertIn("raccoon", fortune.spirit_animal)
+        self.assertEqual("The Temporary Permanent", fortune.omen)
+        self.assertEqual("cursed but deployable", fortune.fortune_level)
+        self.assertIn("git grep", fortune.lucky_command)
+
+    def test_generate_fortune_detects_repeated_final_commits(self):
+        commits = [
+            Commit("a", 1_704_024_000, "Alice", "final docs"),
+            Commit("b", 1_704_096_000, "Alice", "final release"),
+            Commit("c", 1_704_182_400, "Alice", "update readme"),
+        ]
+
+        fortune = generate_fortune(analyze(commits))
+
+        self.assertEqual("The Final That Was Not Final", fortune.omen)
+        self.assertEqual("cursed but deployable", fortune.fortune_level)
+        self.assertIn("final final", fortune.prediction)
 
 
 if __name__ == "__main__":

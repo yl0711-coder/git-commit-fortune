@@ -16,6 +16,8 @@ def render_text(fortune: Fortune, repository: str) -> str:
         "",
         f"Repository: {repository}",
         "",
+        f"Omen: {fortune.omen}",
+        f"Fortune level: {fortune.fortune_level}",
         f"Repository mood: {fortune.mood}",
         f"Spirit animal: {fortune.spirit_animal}",
         "",
@@ -33,6 +35,9 @@ def render_text(fortune: Fortune, repository: str) -> str:
             "",
             "Advice:",
             fortune.advice,
+            "",
+            "Lucky command:",
+            fortune.lucky_command,
         ]
     )
 
@@ -45,14 +50,16 @@ def render_json(fortune: Fortune, repository: str) -> str:
     payload = {
         "repository": repository,
         "fortune": {
+            "omen": fortune.omen,
+            "fortune_level": fortune.fortune_level,
             "mood": fortune.mood,
             "spirit_animal": fortune.spirit_animal,
             "signs": fortune.signs,
             "prediction": fortune.prediction,
             "advice": fortune.advice,
+            "lucky_command": fortune.lucky_command,
         },
         "stats": asdict(fortune.stats),
     }
 
     return json.dumps(payload, indent=2, ensure_ascii=False)
-

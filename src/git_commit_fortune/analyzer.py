@@ -61,11 +61,14 @@ def generate_fortune(stats: CommitStats) -> Fortune:
 
     if stats.total == 0:
         return Fortune(
+            omen="uncommitted timeline",
+            fortune_level="unreadable",
             mood="silent but suspicious",
             spirit_animal="an empty terminal blinking at midnight",
             signs=["no commits were found"],
             prediction="The repository is waiting for its first questionable decision.",
             advice="Make the first commit before asking the oracle again.",
+            lucky_command="git commit --allow-empty -m \"begin\"",
             stats=stats,
         )
 
@@ -83,17 +86,23 @@ def generate_fortune(stats: CommitStats) -> Fortune:
     final_count = stats.keyword_counts.get("final", 0)
 
     signs = build_signs(stats, fix_like, chaos_like, final_count)
+    omen = choose_omen(stats, fix_like, chaos_like, final_count)
+    fortune_level = choose_fortune_level(stats, fix_like, chaos_like, final_count)
     mood = choose_mood(stats, fix_like, chaos_like)
     animal = choose_spirit_animal(stats, fix_like, chaos_like)
     prediction = choose_prediction(stats, fix_like, chaos_like, final_count)
     advice = choose_advice(stats, fix_like, chaos_like)
+    lucky_command = choose_lucky_command(stats, fix_like, chaos_like, final_count)
 
     return Fortune(
+        omen=omen,
+        fortune_level=fortune_level,
         mood=mood,
         spirit_animal=animal,
         signs=signs,
         prediction=prediction,
         advice=advice,
+        lucky_command=lucky_command,
         stats=stats,
     )
 
@@ -143,6 +152,48 @@ def choose_mood(stats: CommitStats, fix_like: int, chaos_like: int) -> str:
     return "stable enough to be suspicious"
 
 
+def choose_omen(
+    stats: CommitStats,
+    fix_like: int,
+    chaos_like: int,
+    final_count: int,
+) -> str:
+    """Choose the headline omen."""
+
+    if final_count >= 2:
+        return "The Final That Was Not Final"
+    if stats.ratio(chaos_like) >= 0.25:
+        return "The Temporary Permanent"
+    if stats.ratio(fix_like) >= 0.35:
+        return "The Endless Fix"
+    if stats.ratio(stats.after_hours) >= 0.30:
+        return "The Midnight Push"
+    if stats.ratio(stats.weekend) >= 0.25:
+        return "The Weekend Whisper"
+    if stats.authors >= 5:
+        return "The Many Hands"
+    return "The Calm Before Refactor"
+
+
+def choose_fortune_level(
+    stats: CommitStats,
+    fix_like: int,
+    chaos_like: int,
+    final_count: int,
+) -> str:
+    """Choose a playful severity level."""
+
+    if final_count >= 2 or stats.ratio(chaos_like) >= 0.30:
+        return "cursed but deployable"
+    if stats.ratio(fix_like) >= 0.35 or stats.ratio(stats.after_hours) >= 0.35:
+        return "unstable magic"
+    if stats.ratio(stats.weekend) >= 0.25:
+        return "weekend haunted"
+    if stats.total < 5:
+        return "too young to trust"
+    return "mostly harmless"
+
+
 def choose_spirit_animal(stats: CommitStats, fix_like: int, chaos_like: int) -> str:
     """Choose a spirit animal."""
 
@@ -187,3 +238,21 @@ def choose_advice(stats: CommitStats, fix_like: int, chaos_like: int) -> str:
         return "Review late-night commits during daylight."
     return "Tag a release while the repository still trusts you."
 
+
+def choose_lucky_command(
+    stats: CommitStats,
+    fix_like: int,
+    chaos_like: int,
+    final_count: int,
+) -> str:
+    """Choose a lucky command to run next."""
+
+    if final_count:
+        return "git log --oneline --grep=final"
+    if stats.ratio(chaos_like) >= 0.20:
+        return "git grep -n \"TODO\\|temporary\\|hack\""
+    if stats.ratio(fix_like) >= 0.30:
+        return "git log --oneline --grep=fix"
+    if stats.ratio(stats.after_hours) >= 0.30:
+        return "git log --after=midnight --oneline"
+    return "git status --short"
