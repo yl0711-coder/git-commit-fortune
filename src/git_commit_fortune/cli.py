@@ -31,6 +31,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="number of recent commits to consult, defaults to 80",
     )
     parser.add_argument(
+        "--since",
+        help='only consult commits since a Git date expression, for example "2 weeks ago"',
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="print machine-readable JSON output",
@@ -60,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     repository = Path(args.repository).expanduser().resolve()
 
     try:
-        commits = read_commits(repository, args.limit)
+        commits = read_commits(repository, args.limit, args.since)
     except GitError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

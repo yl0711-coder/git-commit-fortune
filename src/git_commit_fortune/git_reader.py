@@ -12,8 +12,12 @@ class GitError(RuntimeError):
     """Raised when Git history cannot be read."""
 
 
-def read_commits(repository: Path, limit: int) -> list[Commit]:
-    """Read recent commits from a Git repository."""
+def read_commits(repository: Path, limit: int, since: str | None = None) -> list[Commit]:
+    """Read recent commits from a Git repository.
+
+    The optional ``since`` value is passed to Git as-is so users can reuse
+    familiar Git date expressions such as ``2 weeks ago`` or ``2026-01-01``.
+    """
 
     command = [
         "git",
@@ -24,6 +28,8 @@ def read_commits(repository: Path, limit: int) -> list[Commit]:
         "--date=unix",
         "--format=%H%x1f%ct%x1f%an%x1f%s",
     ]
+    if since:
+        command.insert(5, f"--since={since}")
 
     try:
         result = subprocess.run(
@@ -59,4 +65,3 @@ def read_commits(repository: Path, limit: int) -> list[Commit]:
         )
 
     return commits
-

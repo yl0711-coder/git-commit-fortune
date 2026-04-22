@@ -53,6 +53,13 @@ git-commit-fortune /path/to/repo
 git-commit-fortune --limit 30
 ```
 
+只分析最近一段时间的提交：
+
+```bash
+git-commit-fortune --since "2 weeks ago"
+git-commit-fortune --since 2026-01-01
+```
+
 输出 JSON：
 
 ```bash
@@ -125,6 +132,7 @@ JSON 输出包含：
 
 - 作者数量
 - commit 数量
+- 可选的 Git 原生 `--since` 时间窗口
 - 深夜提交
 - 周末提交
 - commit subject 平均长度

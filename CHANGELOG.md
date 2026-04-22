@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- Added `--since` support for Git-native time windows.
 - Added compact `--one-line` output.
 - Added Chinese README and bilingual documentation maintenance notes.
 

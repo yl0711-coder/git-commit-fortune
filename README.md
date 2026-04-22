@@ -51,6 +51,13 @@ Use fewer commits:
 git-commit-fortune --limit 30
 ```
 
+Only consult recent commits:
+
+```bash
+git-commit-fortune --since "2 weeks ago"
+git-commit-fortune --since 2026-01-01
+```
+
 Print JSON:
 
 ```bash
@@ -123,6 +130,7 @@ The first version looks at recent commit history and detects:
 
 - author count
 - commit count
+- optional Git-native `--since` time window
 - after-hours commits
 - weekend commits
 - average subject length
