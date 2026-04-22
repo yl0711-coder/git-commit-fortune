@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- No unreleased changes yet.
+- Added compact `--one-line` output.
+- Added Chinese README and bilingual documentation maintenance notes.
 
 ## v0.1.0 - 2026-04-22
 

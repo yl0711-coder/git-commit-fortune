@@ -15,6 +15,15 @@ class CliTest(unittest.TestCase):
         self.assertEqual(2, exit_code)
         self.assertIn("--limit must be greater than 0", stderr.getvalue())
 
+    def test_json_and_one_line_are_rejected_together(self):
+        stderr = StringIO()
+
+        with contextlib.redirect_stderr(stderr):
+            exit_code = main(["--json", "--one-line"])
+
+        self.assertEqual(2, exit_code)
+        self.assertIn("--json cannot be used with --one-line", stderr.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

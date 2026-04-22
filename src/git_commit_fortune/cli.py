@@ -8,7 +8,7 @@ import sys
 
 from .analyzer import analyze, generate_fortune
 from .git_reader import GitError, read_commits
-from .render import render_json, render_text
+from .render import render_json, render_one_line, render_text
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,6 +35,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="print machine-readable JSON output",
     )
+    parser.add_argument(
+        "--one-line",
+        action="store_true",
+        help="print a compact one-line fortune",
+    )
     return parser
 
 
@@ -43,6 +48,10 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.json and args.one_line:
+        print("error: --json cannot be used with --one-line", file=sys.stderr)
+        return 2
 
     if args.limit <= 0:
         print("error: --limit must be greater than 0", file=sys.stderr)
@@ -61,6 +70,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.json:
         print(render_json(fortune, str(repository)))
+    elif args.one_line:
+        print(render_one_line(fortune))
     else:
         print(render_text(fortune, str(repository)))
 
@@ -69,4 +80,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

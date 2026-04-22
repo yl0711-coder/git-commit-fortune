@@ -44,6 +44,17 @@ def render_text(fortune: Fortune, repository: str) -> str:
     return "\n".join(lines)
 
 
+def render_one_line(fortune: Fortune) -> str:
+    """Render a compact screenshot-friendly fortune."""
+
+    return (
+        "Git Commit Fortune: "
+        f"{fortune.omen} | "
+        f"{fortune.fortune_level} | "
+        f"{fortune.spirit_animal}"
+    )
+
+
 def render_json(fortune: Fortune, repository: str) -> str:
     """Render a machine-readable report."""
 

@@ -57,6 +57,12 @@ Print JSON:
 git-commit-fortune --json
 ```
 
+Print a compact one-line fortune:
+
+```bash
+git-commit-fortune --one-line
+```
+
 ## Example Output
 
 ```text
@@ -84,6 +90,16 @@ Before the next fix, ask whether the bug is a symptom or a tradition.
 
 Lucky command:
 git log --oneline --grep=final
+```
+
+## One-Line Output
+
+```bash
+git-commit-fortune --one-line
+```
+
+```text
+Git Commit Fortune: The Calm Before Refactor | mostly harmless | a calm capybara sitting on green CI
 ```
 
 ## JSON Output
@@ -125,6 +141,10 @@ It does not try to be:
 - a remote service
 
 It should stay local, lightweight, and fun.
+
+## Documentation Maintenance
+
+This project keeps English and Chinese README files in sync. When updating usage, examples, options, or project positioning in `README.md`, update `README.zh-CN.md` in the same change.
 
 ## Development
 
