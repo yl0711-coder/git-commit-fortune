@@ -31,7 +31,7 @@ def analyze(commits: list[Commit]) -> CommitStats:
     keyword_counts = {keyword: 0 for keyword in KEYWORDS}
 
     for commit in commits:
-        created_at = datetime.fromtimestamp(commit.timestamp)
+        created_at = datetime.fromtimestamp(commit.timestamp).astimezone()
         if created_at.hour >= 22 or created_at.hour < 6:
             after_hours += 1
         if created_at.weekday() >= 5:
@@ -132,6 +132,8 @@ def build_signs(
         signs.append(f"{stats.weekend} commit(s) happened during the weekend")
     if stats.average_subject_length < 18:
         signs.append("commit messages are short enough to hide motive")
+    if stats.average_subject_length >= 48:
+        signs.append("commit messages explain enough to make future blame awkward")
 
     return signs
 
@@ -147,6 +149,8 @@ def choose_mood(stats: CommitStats, fix_like: int, chaos_like: int) -> str:
         return "nocturnal and slightly over-caffeinated"
     if stats.ratio(stats.weekend) >= 0.25:
         return "unable to respect weekends"
+    if stats.average_subject_length >= 48:
+        return "over-explained but emotionally sincere"
     if stats.authors >= 5:
         return "crowded but surprisingly civil"
     return "stable enough to be suspicious"
@@ -170,6 +174,8 @@ def choose_omen(
         return "The Midnight Push"
     if stats.ratio(stats.weekend) >= 0.25:
         return "The Weekend Whisper"
+    if stats.average_subject_length >= 48:
+        return "The Verbose Prophecy"
     if stats.authors >= 5:
         return "The Many Hands"
     return "The Calm Before Refactor"
@@ -189,6 +195,8 @@ def choose_fortune_level(
         return "unstable magic"
     if stats.ratio(stats.weekend) >= 0.25:
         return "weekend haunted"
+    if stats.average_subject_length >= 48:
+        return "well-documented anxiety"
     if stats.total < 5:
         return "too young to trust"
     return "mostly harmless"
@@ -203,6 +211,8 @@ def choose_spirit_animal(stats: CommitStats, fix_like: int, chaos_like: int) -> 
         return "a caffeinated octopus holding a rollback plan"
     if stats.ratio(stats.after_hours) >= 0.30:
         return "an owl reviewing pull requests in the dark"
+    if stats.average_subject_length >= 48:
+        return "a librarian labeling every exception path"
     if stats.authors >= 5:
         return "a committee of ants carrying one architecture diagram"
     return "a calm capybara sitting on green CI"
@@ -224,6 +234,8 @@ def choose_prediction(
         return "The next fix will reveal the previous fix's secret twin."
     if stats.ratio(stats.after_hours) >= 0.30:
         return "A late-night commit will look brave until morning."
+    if stats.average_subject_length >= 48:
+        return "The next commit message may qualify as internal documentation."
     return "The repository will remain peaceful until someone opens an old TODO."
 
 
@@ -236,6 +248,8 @@ def choose_advice(stats: CommitStats, fix_like: int, chaos_like: int) -> str:
         return "Before the next fix, ask whether the bug is a symptom or a tradition."
     if stats.ratio(stats.after_hours) >= 0.30:
         return "Review late-night commits during daylight."
+    if stats.average_subject_length >= 48:
+        return "Keep writing context, but make sure the code still agrees."
     return "Tag a release while the repository still trusts you."
 
 
@@ -255,4 +269,6 @@ def choose_lucky_command(
         return "git log --oneline --grep=fix"
     if stats.ratio(stats.after_hours) >= 0.30:
         return "git log --after=midnight --oneline"
+    if stats.average_subject_length >= 48:
+        return "git log --format=%s -n 5"
     return "git status --short"

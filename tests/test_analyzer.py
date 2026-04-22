@@ -61,6 +61,21 @@ class AnalyzerTest(unittest.TestCase):
         self.assertEqual("cursed but deployable", fortune.fortune_level)
         self.assertIn("final final", fortune.prediction)
 
+    def test_generate_fortune_detects_verbose_commit_messages(self):
+        commits = [
+            Commit("a", 1_704_024_000, "Alice", "document why configuration loading avoids implicit environment fallback"),
+            Commit("b", 1_704_096_000, "Alice", "explain repository hygiene behavior for tracked ignored files"),
+            Commit("c", 1_704_182_400, "Alice", "describe release process and validation expectations"),
+            Commit("d", 1_704_268_800, "Alice", "clarify command output modes for future maintainers"),
+            Commit("e", 1_704_355_200, "Alice", "record the tradeoffs behind local first execution"),
+        ]
+
+        fortune = generate_fortune(analyze(commits))
+
+        self.assertEqual("The Verbose Prophecy", fortune.omen)
+        self.assertEqual("well-documented anxiety", fortune.fortune_level)
+        self.assertIn("librarian", fortune.spirit_animal)
+
 
 if __name__ == "__main__":
     unittest.main()
