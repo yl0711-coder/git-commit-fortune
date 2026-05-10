@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- No unreleased changes yet.
+- Added `--strict` mode for CI-friendly exit codes when risky commit patterns are detected.
 
 ## v0.1.1 - 2026-04-22
 

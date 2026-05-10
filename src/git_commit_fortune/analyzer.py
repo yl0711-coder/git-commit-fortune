@@ -107,6 +107,40 @@ def generate_fortune(stats: CommitStats) -> Fortune:
     )
 
 
+def strict_findings(stats: CommitStats) -> list[str]:
+    """Return findings that should make strict mode fail."""
+
+    if stats.total == 0:
+        return ["no commits were available for analysis"]
+
+    fix_like = (
+        stats.keyword_counts.get("fix", 0)
+        + stats.keyword_counts.get("bug", 0)
+        + stats.keyword_counts.get("hotfix", 0)
+    )
+    chaos_like = (
+        stats.keyword_counts.get("wip", 0)
+        + stats.keyword_counts.get("temp", 0)
+        + stats.keyword_counts.get("temporary", 0)
+        + stats.keyword_counts.get("hack", 0)
+    )
+    final_count = stats.keyword_counts.get("final", 0)
+
+    findings: list[str] = []
+    if final_count >= 2:
+        findings.append('repeated "final" commits were found')
+    if stats.ratio(chaos_like) >= 0.30:
+        findings.append("temporary, WIP, or hack-like commits are unusually common")
+    if stats.ratio(fix_like) >= 0.35:
+        findings.append("fix, bug, or hotfix commits dominate the recent history")
+    if stats.ratio(stats.after_hours) >= 0.40:
+        findings.append("after-hours commits are unusually common")
+    if stats.total >= 5 and stats.average_subject_length < 12:
+        findings.append("commit subjects are too short to explain intent")
+
+    return findings
+
+
 def build_signs(
     stats: CommitStats,
     fix_like: int,

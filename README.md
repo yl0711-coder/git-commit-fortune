@@ -70,6 +70,13 @@ Print a compact one-line fortune:
 git-commit-fortune --one-line
 ```
 
+Fail when risky patterns are found:
+
+```bash
+git-commit-fortune --strict
+git-commit-fortune --strict --json
+```
+
 ## Example Output
 
 ```text
@@ -124,6 +131,20 @@ JSON output includes:
 
 This is useful if you want to build a badge, dashboard, or another wrapper around the output.
 
+## Strict Mode
+
+`--strict` keeps the normal report output, then exits with code `1` when recent commits contain high-risk patterns.
+
+It currently fails on signals such as:
+
+- repeated `final` commits
+- unusually common `wip`, `temporary`, or `hack` commits
+- unusually common `fix`, `bug`, or `hotfix` commits
+- unusually common after-hours commits
+- very short commit subjects across a non-trivial history
+
+This is useful for a lightweight CI check before a release. It is still a playful heuristic, not a quality gate for team performance.
+
 ## What It Checks
 
 The first version looks at recent commit history and detects:
@@ -135,6 +156,7 @@ The first version looks at recent commit history and detects:
 - weekend commits
 - average subject length
 - keywords such as `fix`, `bug`, `hotfix`, `wip`, `temporary`, `final`, `hack`, and `release`
+- optional strict-mode findings for CI-friendly exit codes
 
 ## Non-Goals
 

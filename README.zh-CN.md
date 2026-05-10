@@ -72,6 +72,13 @@ git-commit-fortune --json
 git-commit-fortune --one-line
 ```
 
+发现高风险提交模式时返回失败：
+
+```bash
+git-commit-fortune --strict
+git-commit-fortune --strict --json
+```
+
 ## 示例输出
 
 ```text
@@ -126,6 +133,20 @@ JSON 输出包含：
 
 这适合用来做徽章、仪表盘，或者包装成其他工具。
 
+## 严格模式
+
+`--strict` 会保留正常报告输出，然后在最近提交里发现高风险模式时返回退出码 `1`。
+
+当前会关注这些信号：
+
+- 重复出现 `final` commit
+- `wip`、`temporary`、`hack` 类 commit 明显偏多
+- `fix`、`bug`、`hotfix` 类 commit 明显偏多
+- 深夜提交明显偏多
+- 非常短的 commit subject 在一段历史里持续出现
+
+这个模式适合在发布前做一个轻量 CI 检查。它仍然只是一个有趣的启发式判断，不应该当成团队绩效或代码质量的硬指标。
+
 ## 检查内容
 
 第一版会读取最近的 commit 历史，并分析：
@@ -137,6 +158,7 @@ JSON 输出包含：
 - 周末提交
 - commit subject 平均长度
 - `fix`、`bug`、`hotfix`、`wip`、`temporary`、`final`、`hack`、`release` 等关键词
+- 可选的 strict mode 检查，用于 CI 友好的退出码
 
 ## 非目标
 

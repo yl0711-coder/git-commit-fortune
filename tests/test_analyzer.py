@@ -1,6 +1,6 @@
 import unittest
 
-from git_commit_fortune.analyzer import analyze, generate_fortune
+from git_commit_fortune.analyzer import analyze, generate_fortune, strict_findings
 from git_commit_fortune.models import Commit
 
 
@@ -75,6 +75,31 @@ class AnalyzerTest(unittest.TestCase):
         self.assertEqual("The Verbose Prophecy", fortune.omen)
         self.assertEqual("well-documented anxiety", fortune.fortune_level)
         self.assertIn("librarian", fortune.spirit_animal)
+
+    def test_strict_findings_detect_chaotic_history(self):
+        commits = [
+            Commit("a", 1_704_024_000, "Alice", "wip auth"),
+            Commit("b", 1_704_096_000, "Alice", "temporary state"),
+            Commit("c", 1_704_182_400, "Alice", "hack parser"),
+            Commit("d", 1_704_268_800, "Alice", "docs"),
+        ]
+
+        findings = strict_findings(analyze(commits))
+
+        self.assertTrue(findings)
+        self.assertIn("temporary", findings[0])
+
+    def test_strict_findings_allow_calm_history(self):
+        commits = [
+            Commit("a", 1_704_024_000, "Alice", "add repository reader"),
+            Commit("b", 1_704_096_000, "Alice", "document command output"),
+            Commit("c", 1_704_182_400, "Alice", "refactor formatter module"),
+            Commit("d", 1_704_268_800, "Alice", "prepare release notes"),
+        ]
+
+        findings = strict_findings(analyze(commits))
+
+        self.assertEqual([], findings)
 
 
 if __name__ == "__main__":

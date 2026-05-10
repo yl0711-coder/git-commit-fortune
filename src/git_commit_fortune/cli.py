@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 import sys
 
-from .analyzer import analyze, generate_fortune
+from .analyzer import analyze, generate_fortune, strict_findings
 from .git_reader import GitError, read_commits
 from .render import render_json, render_one_line, render_text
 
@@ -44,6 +44,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="print a compact one-line fortune",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="exit with code 1 when high-risk commit patterns are detected",
+    )
     return parser
 
 
@@ -78,6 +83,13 @@ def main(argv: list[str] | None = None) -> int:
         print(render_one_line(fortune))
     else:
         print(render_text(fortune, str(repository)))
+
+    if args.strict:
+        findings = strict_findings(stats)
+        if findings:
+            for finding in findings:
+                print(f"strict: {finding}", file=sys.stderr)
+            return 1
 
     return 0
 
