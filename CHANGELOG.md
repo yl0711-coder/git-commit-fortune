@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## v0.1.2 - 2026-05-18
+
 - Added `--strict` mode for CI-friendly exit codes when risky commit patterns are detected.
+- Fixed package version metadata so `pyproject.toml` and `git_commit_fortune.__version__` match the release line.
 
 ## v0.1.1 - 2026-04-22
 
