@@ -31,11 +31,17 @@ def analyze(commits: list[Commit]) -> CommitStats:
     keyword_counts = {keyword: 0 for keyword in KEYWORDS}
 
     for commit in commits:
-        created_at = datetime.fromtimestamp(commit.timestamp).astimezone()
-        if created_at.hour >= 22 or created_at.hour < 6:
-            after_hours += 1
-        if created_at.weekday() >= 5:
-            weekend += 1
+        # A corrupt or out-of-range timestamp should not crash the whole run;
+        # skip only the time-based signals for that commit, still count it.
+        try:
+            created_at = datetime.fromtimestamp(commit.timestamp).astimezone()
+        except (OverflowError, OSError, ValueError):
+            created_at = None
+        if created_at is not None:
+            if created_at.hour >= 22 or created_at.hour < 6:
+                after_hours += 1
+            if created_at.weekday() >= 5:
+                weekend += 1
 
         subject = commit.subject.lower()
         total_subject_length += len(commit.subject)

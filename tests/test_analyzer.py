@@ -22,6 +22,17 @@ class AnalyzerTest(unittest.TestCase):
         self.assertEqual(1, stats.keyword_counts["hotfix"])
         self.assertEqual(1, stats.keyword_counts["final"])
 
+    def test_analyze_skips_invalid_timestamp_without_crashing(self):
+        commits = [
+            Commit("a", 1_704_024_000, "Alice", "fix login bug"),
+            Commit("b", 10**18, "Bob", "broken timestamp commit"),
+        ]
+
+        stats = analyze(commits)
+
+        self.assertEqual(2, stats.total)
+        self.assertEqual(1, stats.keyword_counts["fix"])
+
     def test_generate_fortune_for_empty_history(self):
         stats = analyze([])
 

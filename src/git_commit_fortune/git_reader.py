@@ -7,6 +7,9 @@ import subprocess
 
 from .models import Commit
 
+# Guards against a hung or pathological `git log` blocking the CLI forever.
+GIT_TIMEOUT_SECONDS = 15
+
 
 class GitError(RuntimeError):
     """Raised when Git history cannot be read."""
@@ -29,7 +32,10 @@ def read_commits(repository: Path, limit: int, since: str | None = None) -> list
         "--format=%H%x1f%ct%x1f%an%x1f%s",
     ]
     if since:
-        command.insert(5, f"--since={since}")
+        # Appended rather than inserted at a fixed index: git accepts log
+        # options in any order, so this does not depend on the position of
+        # the other flags above.
+        command.append(f"--since={since}")
 
     try:
         result = subprocess.run(
@@ -37,7 +43,10 @@ def read_commits(repository: Path, limit: int, since: str | None = None) -> list
             check=False,
             capture_output=True,
             text=True,
+            timeout=GIT_TIMEOUT_SECONDS,
         )
+    except subprocess.TimeoutExpired as exc:
+        raise GitError(f"git log timed out after {GIT_TIMEOUT_SECONDS}s") from exc
     except OSError as exc:
         raise GitError(f"failed to run git: {exc}") from exc
 
